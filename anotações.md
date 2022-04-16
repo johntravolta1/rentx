@@ -8,6 +8,13 @@ docker ps
 docker-compose up
 http://localhost:5050/
 
+## Git:
+Para fazer upload para o git:
+git add .
+git comit -m 'comentário'
+git push
+
+Para verificar o que está no stage: git status
 
 
 ## =>o pg admin conectou, mas o app não buildou
@@ -37,3 +44,7 @@ Na CLI do docker pra obter o ip
 era um bug da nova versão do typeorm. Não vou usar argumentos por enquanto, apenas passar o caminho completo das migrations. Por exemplo, o que deveria ser 'yarn typeorm migration:create -n UserMigration' será 'yarn typeorm migration:create src/database/migrations/UserMigration'
 ## obs:
 ao fazer o getting started do typeorm, descobri que a base de dados do postgres não estava conectado pois o serviço não estava iniciado em 'Serviços' do windows. Lembro que eu o tinha parado por algum motivo...
+
+TESTES
+1 - Testes Unitários: testes da regra de negócio (1 arquivo só)
+2 - Testes de Integração: testar o fluxo da aplicação (vários arquivos)
