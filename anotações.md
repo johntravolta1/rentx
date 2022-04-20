@@ -48,3 +48,7 @@ ao fazer o getting started do typeorm, descobri que a base de dados do postgres 
 TESTES
 1 - Testes Unitários: testes da regra de negócio (1 arquivo só)
 2 - Testes de Integração: testar o fluxo da aplicação (vários arquivos)
+
+Como fiz pra alterar a coluna que criei errado:
+Duas maneiras => 1) alterei o script de criação e dei um migration:revert até o ponto antes de eu ter criado a tabela (cada revert reverte um passo), e rodei migration run novamente
+2) criar um script para alterar o nome da coluna e dar um migration:run

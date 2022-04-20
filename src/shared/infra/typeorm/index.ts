@@ -1,7 +1,27 @@
 import "reflect-metadata"
-import { createConnection } from "typeorm"
+import { Connection, createConnection, getConnection, getConnectionOptions } from "typeorm"
+
+
+// interface IOptions {
+//     host: string;
+// }
+
+// getConnectionOptions().then((options) => {
+//     const newOptions  = options as IOptions
+//     newOptions.host = 'database';
+//     createConnection({
+//         ...options
+//     })
+// })
+
 
 createConnection();
+
+export default async() : Promise<Connection> => {
+    return createConnection();
+}
+
+
 // import { DataSource } from "typeorm"
 
 // export const AppDataSource = new DataSource({

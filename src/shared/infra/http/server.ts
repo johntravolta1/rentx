@@ -12,6 +12,7 @@ import '../../container'
 import { usersRoutes } from './routes/users.routes';
 import { authenticateRoutes } from './routes/authenticate.routes';
 import { AppError } from '../../errors/AppError';
+import { carsRoutes } from './routes/car.routes';
 // import { AppDataSource } from "./database";
 
 // AppDataSource.initialize().then(async () => {
@@ -27,14 +28,15 @@ app.use("/categories", categoriesRoutes)
 app.use("/specifications", specificationsRoutes)
 app.use('/users', usersRoutes)
 app.use(authenticateRoutes)
+app.use('/cars', carsRoutes)
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
 app.post("/courses", (request, response) => {
     const { name} = request.body;
-
     return response.json({name})
 })
+
 
 app.use((err: Error, request: Request, response: Response, next: NextFunction) => {
     if(err instanceof AppError) {
