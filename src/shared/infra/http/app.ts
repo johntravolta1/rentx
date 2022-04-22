@@ -20,8 +20,6 @@ import { rentalRoutes } from './routes/rental.routes';
 //     console.log('ain jackson')
 // })
 
-
-
 const app = express();
 app.use(express.json());
 

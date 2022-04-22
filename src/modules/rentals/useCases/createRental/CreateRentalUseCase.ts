@@ -43,8 +43,6 @@ class CreateRentalUseCase {
             throw new AppError(`The minimal rental time it's 24 hours. This rental time is ${compare}`)
         }
 
-        console.log(compare)
-
         const rental = await this.rentalsRepository.create({
             user_id,
             car_id,
