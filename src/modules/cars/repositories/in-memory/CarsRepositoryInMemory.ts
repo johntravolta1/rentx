@@ -5,14 +5,15 @@ import { ICarsRepository } from "../ICarsRepository";
 
 
 class CarsRepositoryInMemory implements ICarsRepository {
+    
   
     cars: Car[] =[];
     
-    async create({brand, category_id, daily_rate, description, fine_amount, name, license_plate, id}: ICreateCarDTO): Promise<Car> {
+    async create({brand, category_id, daily_rate, description, fine_amount, name, license_plate}: ICreateCarDTO): Promise<Car> {
         const car = new Car();
         
         Object.assign(car, {
-            brand, category_id, daily_rate, description, fine_amount, name, license_plate, id
+            brand, category_id, daily_rate, description, fine_amount, name, license_plate
         })
         
         this.cars.push(car);
@@ -33,6 +34,11 @@ class CarsRepositoryInMemory implements ICarsRepository {
 
     async findById(id: string): Promise<Car> {
         return this.cars.find(c => c.id === id);
+    }
+
+    async updateAvailable(id: string, available: boolean): Promise<void> {
+        const findIndex = this.cars.findIndex(c => c.id === id);
+        this.cars[findIndex].available = available
     }
 }
 

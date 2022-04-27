@@ -56,7 +56,6 @@ describe('Create Category Controller', () => {
             Authorization: `Bearer ${token}`
         })
         const response2 = await request(app).get('/categories')
-        console.log(response2.body)
 
         expect(response.status).toBe(201);
     })
@@ -71,7 +70,6 @@ describe('Create Category Controller', () => {
         
 
         const response2 = await request(app).get('/categories')
-        console.log(response2.body)
 
         const response = await request(app).post('/categories').send({
             name: 'Categories Supertest',

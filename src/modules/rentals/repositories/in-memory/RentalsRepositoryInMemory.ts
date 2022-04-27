@@ -3,6 +3,7 @@ import { Rental } from "../../infra/typeorm/entities/Rental";
 import { IRentalsRepository } from "../IRentalsRepository";
 
 class RentalsRepositoryInMemory implements IRentalsRepository {
+
   
     rentals: Rental[] = []
 
@@ -26,6 +27,14 @@ class RentalsRepositoryInMemory implements IRentalsRepository {
         this.rentals.push(rental)
 
         return rental
+    }
+
+    async findById(id: string): Promise<Rental> {
+        return this.rentals.find((r) => r.id === id)
+    }
+
+    async findByUser(user_id: string): Promise<Rental[]> {
+        return this.rentals.filter(r => r.user_id === user_id)
     }
 
 

@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IDateProvider } from "../../../../shared/container/providers/DayjsProvider/IDateProvider";
 import { AppError } from "../../../../shared/errors/AppError";
+import { ICarsRepository } from "../../../cars/repositories/ICarsRepository";
 import { Rental } from "../../infra/typeorm/entities/Rental";
 import { IRentalsRepository } from "../../repositories/IRentalsRepository";
 
@@ -17,7 +18,9 @@ class CreateRentalUseCase {
         @inject('RentalsRepository')
         private rentalsRepository: IRentalsRepository,
         @inject('DayjsDateProvider')
-        private dateProvider: IDateProvider
+        private dateProvider: IDateProvider,
+        @inject('CarsRepository')
+        private carsRepository: ICarsRepository
     ) {}
     
     async execute({user_id, car_id, expected_return_date}: IRequest) : Promise<Rental> {
@@ -40,7 +43,7 @@ class CreateRentalUseCase {
         const compare = this.dateProvider.compareInHours(dateNow, expected_return_date)
 
         if ( compare < minimalRentalHours) {
-            throw new AppError(`The minimal rental time it's 24 hours. This rental time is ${compare}`)
+            throw new AppError(`The minimal rental time it's 24 hours`)
         }
 
         const rental = await this.rentalsRepository.create({
@@ -48,6 +51,8 @@ class CreateRentalUseCase {
             car_id,
             expected_return_date
         })
+
+        await this.carsRepository.updateAvailable(car_id,false)
 
         return rental
 

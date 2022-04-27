@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'test') {
     )
 }
 else {
-    console.log('uin')
+    console.log('Process env de prod')
     createConnection()
 }
 

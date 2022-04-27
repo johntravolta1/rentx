@@ -14,6 +14,7 @@ import { authenticateRoutes } from './routes/authenticate.routes';
 import { AppError } from '../../errors/AppError';
 import { carsRoutes } from './routes/car.routes';
 import { rentalRoutes } from './routes/rental.routes';
+import { passwordRoutes } from './routes/password.routes';
 // import { AppDataSource } from "./database";
 
 // AppDataSource.initialize().then(async () => {
@@ -29,6 +30,7 @@ app.use('/users', usersRoutes)
 app.use(authenticateRoutes)
 app.use('/cars', carsRoutes)
 app.use('/rentals', rentalRoutes)
+app.use('/password', passwordRoutes)
 
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile))
