@@ -51,4 +51,30 @@ TESTES
 
 Como fiz pra alterar a coluna que criei errado:
 Duas maneiras => 1) alterei o script de criação e dei um migration:revert até o ponto antes de eu ter criado a tabela (cada revert reverte um passo), e rodei migration run novamente
-2) criar um script para alterar o nome da coluna e dar um migration:run
+2) criar um script para alterar o nome da coluna e dar um migration:run 
+
+------
+sudo adduser app
+1234
+
+----
+## ec2 na aws: SSH Public Key - No supported authentication methods available (server sent public key)
+Criamos o usário app e demos as permissões na pasta .ssh e arquivo autorized_keys. Criamos um par de chaves utilizando PuttyGen, que vem com a instalação do Putty, colocamos a chave pública e colocamos no arquivo authorized_keys, e informamos onde está a chave privada correspondente na hora de conectar (Connection > SSH > Auth)
+Quando vamos conectar pelo putty, estava dando oerro acima. 
+**solução** 
+Ocorre que o arquivo gerado pelo putty tem quebras de linha que não fazem parte da chave. Ao colar a chave, demos tirar as quebras de linha.
+como deve ser:
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCrqUHnJ9/oMxOqZiFOhIvmkVYtFmVTSX+QWbRJOfhkEpWdsllDMGwxTLnFSZOGTo8PBYRJy3UJmBbs8RmZqcCwIKDSdIvN6MvBY4TlcEcDq3p0hkIFwZxlm5CcVILqmzF+5fX5V//Ge4g9PHJJoGmUAAFamxpMtnvcSlk/3ihb0P6u/gTuPZcuWAlRpnoAzZ8XCy6Oq6Eh8Bc7Wm9eCenH/s6iBBmSujeacarKfIPuI7Z9rymDghCxUUV7uyjq1CfM3BiRrrH4YiimiZ+WbzGsrs2OTVkR2KQBOXGDZT7yGAO50M8REsUtxZvvwvaveMamgQIcjqZfD/JzG9Vl62In
+
+como é gerado pelo putty:
+---- BEGIN SSH2 PUBLIC KEY ----
+Comment: "rsa-key-20220502"
+AAAAB3NzaC1yc2EAAAADAQABAAABAQCrqUHnJ9/oMxOqZiFOhIvmkVYtFmVTSX+Q
+WbRJOfhkEpWdsllDMGwxTLnFSZOGTo8PBYRJy3UJmBbs8RmZqcCwIKDSdIvN6MvB
+Y4TlcEcDq3p0hkIFwZxlm5CcVILqmzF+5fX5V//Ge4g9PHJJoGmUAAFamxpMtnvc
+Slk/3ihb0P6u/gTuPZcuWAlRpnoAzZ8XCy6Oq6Eh8Bc7Wm9eCenH/s6iBBmSujea
+carKfIPuI7Z9rymDghCxUUV7uyjq1CfM3BiRrrH4YiimiZ+WbzGsrs2OTVkR2KQB
+OXGDZT7yGAO50M8REsUtxZvvwvaveMamgQIcjqZfD/JzG9Vl62In
+---- END SSH2 PUBLIC KEY ----
+
+referência: https://askubuntu.com/questions/204400/ssh-public-key-no-supported-authentication-methods-available-server-sent-publ

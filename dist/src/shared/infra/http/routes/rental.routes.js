@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.rentalRoutes = void 0;
+const express_1 = require("express");
+const CreateRentalController_1 = require("../../../../modules/rentals/useCases/createRental/CreateRentalController");
+const ensureAuthentication_1 = require("../middlewares/ensureAuthentication");
+const DevolutionRentalController_1 = require("../../../../modules/rentals/useCases/devolutionRental/DevolutionRentalController");
+const ListRentalsByUserController_1 = require("../../../../modules/rentals/useCases/listRentalsByUser/ListRentalsByUserController");
+const rentalRoutes = (0, express_1.Router)();
+exports.rentalRoutes = rentalRoutes;
+const createRentalController = new CreateRentalController_1.CreateRentalController();
+const devolutionRentalController = new DevolutionRentalController_1.DevolutionRentalController();
+const listRentalsByUserController = new ListRentalsByUserController_1.ListRentalsByUserController();
+rentalRoutes.post('/', ensureAuthentication_1.ensureAuthenticated, createRentalController.handle);
+rentalRoutes.post('/devolution/:id', ensureAuthentication_1.ensureAuthenticated, devolutionRentalController.handle);
+rentalRoutes.get('/user', ensureAuthentication_1.ensureAuthenticated, listRentalsByUserController.handle);

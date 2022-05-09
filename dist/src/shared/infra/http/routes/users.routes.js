@@ -1,0 +1,22 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.usersRoutes = void 0;
+const express_1 = require("express");
+const multer_1 = __importDefault(require("multer"));
+const CreateUserController_1 = require("../../../../modules/accounts/useCases/createUser/CreateUserController");
+const UpdataUserAvatarController_1 = require("../../../../modules/accounts/useCases/updateUserAvatar/UpdataUserAvatarController");
+const upload_1 = __importDefault(require("../../../../config/upload"));
+const ensureAuthentication_1 = require("../middlewares/ensureAuthentication");
+const ProfileUserController_1 = require("../../../../modules/accounts/useCases/profileUserUseCase/ProfileUserController");
+const usersRoutes = (0, express_1.Router)();
+exports.usersRoutes = usersRoutes;
+const uploadAvatar = (0, multer_1.default)(upload_1.default);
+const createUserController = new CreateUserController_1.CreateUserController();
+const updateUserAvatarController = new UpdataUserAvatarController_1.UpdateUserAvatarController();
+const profileUserController = new ProfileUserController_1.ProfileUserController();
+usersRoutes.post("/", createUserController.handle);
+usersRoutes.patch('/avatar', ensureAuthentication_1.ensureAuthenticated, uploadAvatar.single('avatar'), updateUserAvatarController.handle);
+usersRoutes.get('/profile', ensureAuthentication_1.ensureAuthenticated, profileUserController.handle);

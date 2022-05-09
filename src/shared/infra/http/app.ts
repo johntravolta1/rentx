@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import 'dotenv/config'
 import express, { NextFunction, Request, Response } from "express";
 import 'express-async-errors'
 import { categoriesRoutes } from "./routes/categories.routes";
@@ -15,6 +16,7 @@ import { AppError } from '../../errors/AppError';
 import { carsRoutes } from './routes/car.routes';
 import { rentalRoutes } from './routes/rental.routes';
 import { passwordRoutes } from './routes/password.routes';
+import upload from '../../../config/upload';
 // import { AppDataSource } from "./database";
 
 // AppDataSource.initialize().then(async () => {
@@ -31,7 +33,8 @@ app.use(authenticateRoutes)
 app.use('/cars', carsRoutes)
 app.use('/rentals', rentalRoutes)
 app.use('/password', passwordRoutes)
-
+app.use('/avatar', express.static(`${upload.tmpFolder}/avatar`))
+app.use('/cars', express.static(`${upload.tmpFolder}/cars`))
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile))
 

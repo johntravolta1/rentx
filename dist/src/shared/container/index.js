@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tsyringe_1 = require("tsyringe");
+const UsersRepository_1 = require("../../modules/accounts/infra/typeorm/repositories/UsersRepository");
+const CategoriesRepository_1 = require("../../modules/cars/infra/typeorm/repositories/CategoriesRepository");
+require("./providers/");
+const SpecificationsRepostory_1 = require("../../modules/cars/infra/typeorm/repositories/SpecificationsRepostory");
+const CarsRepository_1 = require("../../modules/cars/infra/typeorm/repositories/CarsRepository");
+const CarsImageRepository_1 = require("../../modules/cars/infra/typeorm/repositories/CarsImageRepository");
+const RentalsRepository_1 = require("../../modules/rentals/infra/typeorm/repositories/RentalsRepository");
+const UsersTokenRepository_1 = require("../../modules/accounts/infra/typeorm/repositories/UsersTokenRepository");
+tsyringe_1.container.registerSingleton("CategoriesRepository", CategoriesRepository_1.CategoriesRepository);
+tsyringe_1.container.registerSingleton("SpecificationsRepository", SpecificationsRepostory_1.SpecificationsRepository);
+tsyringe_1.container.registerSingleton("UsersRepository", UsersRepository_1.UsersRepository);
+tsyringe_1.container.registerSingleton('CarsRepository', CarsRepository_1.CarsRepository);
+tsyringe_1.container.registerSingleton('CarsImageRepository', CarsImageRepository_1.CarsImageRepository);
+tsyringe_1.container.registerSingleton('RentalsRepository', RentalsRepository_1.RentalsRepository);
+tsyringe_1.container.registerSingleton('UsersTokenRepository', UsersTokenRepository_1.UsersTokensRepository);
