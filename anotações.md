@@ -58,6 +58,10 @@ sudo adduser app
 1234
 
 ----
+
+instalações do babel: 
+yarn add @babel/cli @babel/core @babel/plugin-proposal-class-properties @babel/plugin-proposal-decorators @babel/preset-env babel-plugin-module-resolver babel-plugin-transform-typescript-metadata @babel/preset-typescript -D
+
 ## ec2 na aws: SSH Public Key - No supported authentication methods available (server sent public key)
 Criamos o usário app e demos as permissões na pasta .ssh e arquivo autorized_keys. Criamos um par de chaves utilizando PuttyGen, que vem com a instalação do Putty, colocamos a chave pública e colocamos no arquivo authorized_keys, e informamos onde está a chave privada correspondente na hora de conectar (Connection > SSH > Auth)
 Quando vamos conectar pelo putty, estava dando oerro acima. 
@@ -78,3 +82,15 @@ OXGDZT7yGAO50M8REsUtxZvvwvaveMamgQIcjqZfD/JzG9Vl62In
 ---- END SSH2 PUBLIC KEY ----
 
 referência: https://askubuntu.com/questions/204400/ssh-public-key-no-supported-authentication-methods-available-server-sent-publ
+
+## Github Actions => ssh: handshake failed on every attempt
+dizia que não tinha public key no arquivo authorized_keys do usuário app na instância ec2 do ubuntu. O que resolveu foi fazer a chave pelo próprio ubuntu, e utilizando o método e255:
+
+In my case, I found this in the ssh log on my server: userauth_pubkey: key type ssh-rsa not in PubkeyAcceptedAlgorithms [preauth] This led me to this ArchLinux forum, which implicates a change in the latest openssh version. https://bbs.archlinux.org/viewtopic.php?pid=1995438#p1995438 Following that comment's advice, I regenerated keys using ed25519 instead of rsa, and this solved the problem for me.
+
+I was having the same error on my ssh log. Generated my keys using ed25519 and it also worked for me. Thank you @rohnjeynolds
+command to watch logs from @avdept: sudo tail -f /var/log/auth.log
+command to generate key from appleboy: ssh-keygen -t ed25519 -a 200 -C "your_email@example.com"
+Thank you!
+
+ref: https://github.com/appleboy/ssh-action/issues/80

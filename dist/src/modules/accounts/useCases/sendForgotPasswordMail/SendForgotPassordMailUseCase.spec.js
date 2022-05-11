@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const DayjsDateProvider_1 = require("../../../../shared/container/providers/DayjsProvider/DayjsDateProvider");
 const MailProviderInMemory_1 = require("../../../../shared/container/providers/MailProvider/in-memory/MailProviderInMemory");
@@ -28,29 +19,29 @@ describe('Send forgot mail', () => {
         mailProvider = new MailProviderInMemory_1.MailProviderInMemory();
         sendForgotPasswordMailUseCase = new SendForgotPassordMailUseCase_1.SendForgotMailUseCase(usersRepositoryInMemory, usersTokenRepositoryInMemory, dateProvider, mailProvider);
     });
-    it('should be able to send a forgot password mail to user', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('should be able to send a forgot password mail to user', async () => {
         const sendMail = jest.spyOn(mailProvider, 'sendMail');
-        yield usersRepositoryInMemory.create({
+        await usersRepositoryInMemory.create({
             driver_license: '283829',
             email: 'asdf@test.com',
             name: 'Test',
             password: '1234'
         });
-        yield sendForgotPasswordMailUseCase.execute('asdf@test.com');
+        await sendForgotPasswordMailUseCase.execute('asdf@test.com');
         expect(sendMail).toHaveBeenCalled();
-    }));
-    it('should not be able to send email if user does not exists', () => __awaiter(void 0, void 0, void 0, function* () {
-        yield expect(sendForgotPasswordMailUseCase.execute('nonuser@does.exists.not')).rejects.toEqual(new AppError_1.AppError('User does not exists!'));
-    }));
-    it('should be able to create an users token', () => __awaiter(void 0, void 0, void 0, function* () {
+    });
+    it('should not be able to send email if user does not exists', async () => {
+        await expect(sendForgotPasswordMailUseCase.execute('nonuser@does.exists.not')).rejects.toEqual(new AppError_1.AppError('User does not exists!'));
+    });
+    it('should be able to create an users token', async () => {
         const generateTokenMemory = jest.spyOn(usersRepositoryInMemory, 'create');
-        yield usersRepositoryInMemory.create({
+        await usersRepositoryInMemory.create({
             driver_license: '32221',
             email: '1332@test.com',
             name: 'Test 2',
             password: '12345'
         });
-        yield sendForgotPasswordMailUseCase.execute('1332@test.com');
+        await sendForgotPasswordMailUseCase.execute('1332@test.com');
         expect(generateTokenMemory).toBeCalled();
-    }));
+    });
 });

@@ -11,15 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateCarSpecificationUseCase = void 0;
 const tsyringe_1 = require("tsyringe");
@@ -29,17 +20,15 @@ let CreateCarSpecificationUseCase = class CreateCarSpecificationUseCase {
         this.carRepository = carRepository;
         this.specificationsRepository = specificationsRepository;
     }
-    execute({ car_id, specifications_id }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const carExists = yield this.carRepository.findById(car_id);
-            if (!carExists) {
-                throw new AppError_1.AppError('Car does not exists!');
-            }
-            const specifications = yield this.specificationsRepository.findByIds(specifications_id);
-            carExists.specifications = specifications;
-            yield this.carRepository.create(carExists);
-            return carExists;
-        });
+    async execute({ car_id, specifications_id }) {
+        const carExists = await this.carRepository.findById(car_id);
+        if (!carExists) {
+            throw new AppError_1.AppError('Car does not exists!');
+        }
+        const specifications = await this.specificationsRepository.findByIds(specifications_id);
+        carExists.specifications = specifications;
+        await this.carRepository.create(carExists);
+        return carExists;
     }
 };
 CreateCarSpecificationUseCase = __decorate([

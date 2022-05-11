@@ -11,15 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -36,43 +27,41 @@ let AuthenticateUserUseCase = class AuthenticateUserUseCase {
         this.usersTokenRepository = usersTokenRepository;
         this.dayJsDateProvider = dayJsDateProvider;
     }
-    execute({ email, password }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //Usuário existe
-            const user = yield this.usersRepository.findByEmail(email);
-            if (!user) {
-                throw new AppError_1.AppError('Email or password incorrect'); //para o hacker não saber que o usuário não existe
-            }
-            // Senha está correta
-            const passwordMatch = yield (0, bcrypt_1.compare)(password, user.password);
-            if (!passwordMatch) {
-                throw new AppError_1.AppError('Email or password incorrect'); //para o hacker não saber que o usuário não existe
-            }
-            //Gerar o token
-            const token = (0, jsonwebtoken_1.sign)({}, auth_1.default.secret_token, {
-                subject: user.id,
-                expiresIn: auth_1.default.expires_in_token
-            });
-            const refresh_token = (0, jsonwebtoken_1.sign)({ email }, auth_1.default.secret_refresh_token, {
-                subject: user.id,
-                expiresIn: auth_1.default.expires_in_refresh_token
-            });
-            const refresh_token_expires_date = this.dayJsDateProvider.addDays(auth_1.default.expires_refresh_token_days);
-            yield this.usersTokenRepository.create({
-                user_id: user.id,
-                refresh_token,
-                expires_date: refresh_token_expires_date,
-            });
-            const tokenReturn = {
-                token,
-                user: {
-                    name: user.name,
-                    email: user.email
-                },
-                refresh_token
-            };
-            return tokenReturn;
+    async execute({ email, password }) {
+        //Usuário existe
+        const user = await this.usersRepository.findByEmail(email);
+        if (!user) {
+            throw new AppError_1.AppError('Email or password incorrect'); //para o hacker não saber que o usuário não existe
+        }
+        // Senha está correta
+        const passwordMatch = await (0, bcrypt_1.compare)(password, user.password);
+        if (!passwordMatch) {
+            throw new AppError_1.AppError('Email or password incorrect'); //para o hacker não saber que o usuário não existe
+        }
+        //Gerar o token
+        const token = (0, jsonwebtoken_1.sign)({}, auth_1.default.secret_token, {
+            subject: user.id,
+            expiresIn: auth_1.default.expires_in_token
         });
+        const refresh_token = (0, jsonwebtoken_1.sign)({ email }, auth_1.default.secret_refresh_token, {
+            subject: user.id,
+            expiresIn: auth_1.default.expires_in_refresh_token
+        });
+        const refresh_token_expires_date = this.dayJsDateProvider.addDays(auth_1.default.expires_refresh_token_days);
+        await this.usersTokenRepository.create({
+            user_id: user.id,
+            refresh_token,
+            expires_date: refresh_token_expires_date,
+        });
+        const tokenReturn = {
+            token,
+            user: {
+                name: user.name,
+                email: user.email
+            },
+            refresh_token
+        };
+        return tokenReturn;
     }
 };
 AuthenticateUserUseCase = __decorate([

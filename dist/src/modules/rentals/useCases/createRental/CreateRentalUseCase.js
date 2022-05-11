@@ -11,15 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateRentalUseCase = void 0;
 const tsyringe_1 = require("tsyringe");
@@ -30,30 +21,28 @@ let CreateRentalUseCase = class CreateRentalUseCase {
         this.dateProvider = dateProvider;
         this.carsRepository = carsRepository;
     }
-    execute({ user_id, car_id, expected_return_date }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const carUnAvailale = yield this.rentalsRepository.findOpenRentalByCar(car_id);
-            if (carUnAvailale) {
-                throw new AppError_1.AppError('Car is unavailable');
-            }
-            const rentalOpenToUser = yield this.rentalsRepository.findOpenRentalByUser(user_id);
-            if (rentalOpenToUser) {
-                throw new AppError_1.AppError("There's a rental in progress for this user!");
-            }
-            const minimalRentalHours = 24;
-            const dateNow = this.dateProvider.dateNow();
-            const compare = this.dateProvider.compareInHours(dateNow, expected_return_date);
-            if (compare < minimalRentalHours) {
-                throw new AppError_1.AppError(`The minimal rental time it's 24 hours`);
-            }
-            const rental = yield this.rentalsRepository.create({
-                user_id,
-                car_id,
-                expected_return_date
-            });
-            yield this.carsRepository.updateAvailable(car_id, false);
-            return rental;
+    async execute({ user_id, car_id, expected_return_date }) {
+        const carUnAvailale = await this.rentalsRepository.findOpenRentalByCar(car_id);
+        if (carUnAvailale) {
+            throw new AppError_1.AppError('Car is unavailable');
+        }
+        const rentalOpenToUser = await this.rentalsRepository.findOpenRentalByUser(user_id);
+        if (rentalOpenToUser) {
+            throw new AppError_1.AppError("There's a rental in progress for this user!");
+        }
+        const minimalRentalHours = 24;
+        const dateNow = this.dateProvider.dateNow();
+        const compare = this.dateProvider.compareInHours(dateNow, expected_return_date);
+        if (compare < minimalRentalHours) {
+            throw new AppError_1.AppError(`The minimal rental time it's 24 hours`);
+        }
+        const rental = await this.rentalsRepository.create({
+            user_id,
+            car_id,
+            expected_return_date
         });
+        await this.carsRepository.updateAvailable(car_id, false);
+        return rental;
     }
 };
 CreateRentalUseCase = __decorate([

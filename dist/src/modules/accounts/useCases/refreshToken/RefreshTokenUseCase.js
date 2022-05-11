@@ -11,15 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -34,34 +25,32 @@ let RefreshTokenUseCase = class RefreshTokenUseCase {
         this.usersTokenRepository = usersTokenRepository;
         this.dayJsDateProvider = dayJsDateProvider;
     }
-    execute(token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { email, sub } = (0, jsonwebtoken_1.verify)(token, auth_1.default.secret_refresh_token);
-            const user_id = sub;
-            const userToken = yield this.usersTokenRepository.findByUserIdAndRefreshToken(user_id, token);
-            if (!userToken) {
-                throw new AppError_1.AppError('Refresh Token does not exists!');
-            }
-            yield this.usersTokenRepository.deleteById(userToken.id);
-            const expires_date = this.dayJsDateProvider.addDays(auth_1.default.expires_refresh_token_days);
-            const refresh_token = (0, jsonwebtoken_1.sign)({ email }, auth_1.default.secret_refresh_token, {
-                subject: sub,
-                expiresIn: auth_1.default.expires_in_refresh_token
-            });
-            yield this.usersTokenRepository.create({
-                expires_date,
-                refresh_token,
-                user_id
-            });
-            const newToken = (0, jsonwebtoken_1.sign)({}, auth_1.default.secret_token, {
-                subject: user_id,
-                expiresIn: auth_1.default.expires_in_token
-            });
-            return {
-                refresh_token,
-                token: newToken
-            };
+    async execute(token) {
+        const { email, sub } = (0, jsonwebtoken_1.verify)(token, auth_1.default.secret_refresh_token);
+        const user_id = sub;
+        const userToken = await this.usersTokenRepository.findByUserIdAndRefreshToken(user_id, token);
+        if (!userToken) {
+            throw new AppError_1.AppError('Refresh Token does not exists!');
+        }
+        await this.usersTokenRepository.deleteById(userToken.id);
+        const expires_date = this.dayJsDateProvider.addDays(auth_1.default.expires_refresh_token_days);
+        const refresh_token = (0, jsonwebtoken_1.sign)({ email }, auth_1.default.secret_refresh_token, {
+            subject: sub,
+            expiresIn: auth_1.default.expires_in_refresh_token
         });
+        await this.usersTokenRepository.create({
+            expires_date,
+            refresh_token,
+            user_id
+        });
+        const newToken = (0, jsonwebtoken_1.sign)({}, auth_1.default.secret_token, {
+            subject: user_id,
+            expiresIn: auth_1.default.expires_in_token
+        });
+        return {
+            refresh_token,
+            token: newToken
+        };
     }
 };
 RefreshTokenUseCase = __decorate([

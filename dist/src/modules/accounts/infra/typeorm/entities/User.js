@@ -10,8 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
-const typeorm_1 = require("typeorm");
 const uuid_1 = require("uuid");
+const typeorm_1 = require("typeorm");
 const class_transformer_1 = require("class-transformer");
 let User = class User {
     constructor() {

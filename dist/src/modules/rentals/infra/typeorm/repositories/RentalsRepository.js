@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RentalsRepository = void 0;
 const typeorm_1 = require("typeorm");
@@ -16,34 +7,26 @@ class RentalsRepository {
     constructor() {
         this.repository = (0, typeorm_1.getRepository)(Rental_1.Rental);
     }
-    findOpenRentalByCar(car_id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.repository.findOne({ where: { car_id, end_date: null } });
-        });
+    async findOpenRentalByCar(car_id) {
+        return await this.repository.findOne({ where: { car_id, end_date: null } });
     }
-    findOpenRentalByUser(user_id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.repository.findOne({ where: { user_id, end_date: null } });
-        });
+    async findOpenRentalByUser(user_id) {
+        return await this.repository.findOne({ where: { user_id, end_date: null } });
     }
-    create({ car_id, expected_return_date, user_id, id, end_date, total }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rental = yield this.repository.create({ car_id, expected_return_date, user_id, id, end_date, total });
-            yield this.repository.save(rental);
-            return rental;
-        });
+    async create({ car_id, expected_return_date, user_id, id, end_date, total }) {
+        const rental = await this.repository.create({ car_id, expected_return_date, user_id, id, end_date, total });
+        await this.repository.save(rental);
+        return rental;
     }
     findById(id) {
         return this.repository.findOne(id);
     }
-    findByUser(user_id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rentals = yield this.repository.find({
-                where: { user_id },
-                relations: ['car']
-            });
-            return rentals;
+    async findByUser(user_id) {
+        const rentals = await this.repository.find({
+            where: { user_id },
+            relations: ['car']
         });
+        return rentals;
     }
 }
 exports.RentalsRepository = RentalsRepository;

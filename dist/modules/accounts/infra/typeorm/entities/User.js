@@ -5,9 +5,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.User = void 0;
 
-var _typeorm = require("typeorm");
-
 var _uuid = require("uuid");
+
+var _typeorm = require("typeorm");
 
 var _classTransformer = require("class-transformer");
 

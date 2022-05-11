@@ -11,15 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SendForgotMailUseCase = void 0;
 const tsyringe_1 = require("tsyringe");
@@ -33,26 +24,24 @@ let SendForgotMailUseCase = class SendForgotMailUseCase {
         this.dateProvider = dateProvider;
         this.mailProvider = mailProvider;
     }
-    execute(email) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.usersRepository.findByEmail(email);
-            const templatePath = (0, path_1.resolve)(__dirname, '..', '..', 'views', 'emails', 'forgotPassword.hbs');
-            if (!user) {
-                throw new AppError_1.AppError('User does not exists!');
-            }
-            const token = (0, uuid_1.v4)();
-            const expires_date = this.dateProvider.addHours(3);
-            yield this.usersTokenRepository.create({
-                refresh_token: token,
-                user_id: user.id,
-                expires_date
-            });
-            const variables = {
-                name: user.name,
-                link: `${process.env.FORGOT_MAIL_URL}${token}`
-            };
-            yield this.mailProvider.sendMail(email, 'Recuperação de senha', variables, templatePath);
+    async execute(email) {
+        const user = await this.usersRepository.findByEmail(email);
+        const templatePath = (0, path_1.resolve)(__dirname, '..', '..', 'views', 'emails', 'forgotPassword.hbs');
+        if (!user) {
+            throw new AppError_1.AppError('User does not exists!');
+        }
+        const token = (0, uuid_1.v4)();
+        const expires_date = this.dateProvider.addHours(3);
+        await this.usersTokenRepository.create({
+            refresh_token: token,
+            user_id: user.id,
+            expires_date
         });
+        const variables = {
+            name: user.name,
+            link: `${process.env.FORGOT_MAIL_URL}${token}`
+        };
+        await this.mailProvider.sendMail(email, 'Recuperação de senha', variables, templatePath);
     }
 };
 SendForgotMailUseCase = __decorate([

@@ -11,15 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DevolutionRentalUseCase = void 0;
 const tsyringe_1 = require("tsyringe");
@@ -30,31 +21,29 @@ let DevolutionRentalUseCase = class DevolutionRentalUseCase {
         this.carsRepository = carsRepository;
         this.dateProvider = dateProvider;
     }
-    execute({ id, user_id }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const minimalRentalTimeInDays = 1;
-            const rental = yield this.rentalsRepository.findById(id);
-            const car = yield this.carsRepository.findById(rental.car_id);
-            if (!rental) {
-                throw new AppError_1.AppError('Rental does not exists!');
-            }
-            let rentalTimeInDays = this.dateProvider.compareInDays(rental.start_date, this.dateProvider.dateNow());
-            if (rentalTimeInDays < minimalRentalTimeInDays) {
-                rentalTimeInDays = 1;
-            }
-            const delay = this.dateProvider.compareInDays(this.dateProvider.dateNow(), rental.expected_return_date);
-            let totalPrice = 0;
-            let Fine = 0;
-            if (delay > 0) {
-                Fine = delay * car.fine_amount;
-            }
-            totalPrice = Fine + (rentalTimeInDays * car.daily_rate);
-            rental.end_date = this.dateProvider.dateNow();
-            rental.total = totalPrice;
-            yield this.rentalsRepository.create(rental);
-            yield this.carsRepository.updateAvailable(car.id, true);
-            return rental;
-        });
+    async execute({ id, user_id }) {
+        const minimalRentalTimeInDays = 1;
+        const rental = await this.rentalsRepository.findById(id);
+        const car = await this.carsRepository.findById(rental.car_id);
+        if (!rental) {
+            throw new AppError_1.AppError('Rental does not exists!');
+        }
+        let rentalTimeInDays = this.dateProvider.compareInDays(rental.start_date, this.dateProvider.dateNow());
+        if (rentalTimeInDays < minimalRentalTimeInDays) {
+            rentalTimeInDays = 1;
+        }
+        const delay = this.dateProvider.compareInDays(this.dateProvider.dateNow(), rental.expected_return_date);
+        let totalPrice = 0;
+        let Fine = 0;
+        if (delay > 0) {
+            Fine = delay * car.fine_amount;
+        }
+        totalPrice = Fine + (rentalTimeInDays * car.daily_rate);
+        rental.end_date = this.dateProvider.dateNow();
+        rental.total = totalPrice;
+        await this.rentalsRepository.create(rental);
+        await this.carsRepository.updateAvailable(car.id, true);
+        return rental;
     }
 };
 DevolutionRentalUseCase = __decorate([
