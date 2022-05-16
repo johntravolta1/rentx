@@ -17,6 +17,7 @@ import { carsRoutes } from './routes/car.routes';
 import { rentalRoutes } from './routes/rental.routes';
 import { passwordRoutes } from './routes/password.routes';
 import upload from '../../../config/upload';
+import cors from 'cors'
 // import { AppDataSource } from "./database";
 
 // AppDataSource.initialize().then(async () => {
@@ -36,6 +37,7 @@ app.use('/password', passwordRoutes)
 app.use('/avatar', express.static(`${upload.tmpFolder}/avatar`))
 app.use('/cars', express.static(`${upload.tmpFolder}/cars`))
 
+app.use(cors())
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
 app.post("/courses", (request, response) => {
