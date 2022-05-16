@@ -19,6 +19,9 @@ import { passwordRoutes } from './routes/password.routes';
 import upload from '../../../config/upload';
 import cors from 'cors'
 import rateLimiter from './middlewares/rateLimiter';
+
+import * as Sentry from "@sentry/node";
+import * as Tracing from "@sentry/tracing";
 // import { AppDataSource } from "./database";
 
 // AppDataSource.initialize().then(async () => {
@@ -28,8 +31,25 @@ import rateLimiter from './middlewares/rateLimiter';
 const app = express();
 
 app.use(cors())
-app.use(rateLimiter)
-app.use(express.json());
+// app.use(rateLimiter) //é preciso rodar o docker para ligar o serviço do redis (rate limiter) - docker-compose up
+
+
+Sentry.init({
+    dsn: "https://293e27b795244c2486440d0dd9b98bc8@o1249513.ingest.sentry.io/6410319",
+    integrations: [
+      new Sentry.Integrations.Http({ tracing: true }),
+      new Tracing.Integrations.Express({ app }),
+    ],
+    tracesSampleRate: 1.0,
+  });
+
+  app.use(Sentry.Handlers.requestHandler());
+  app.use(Sentry.Handlers.tracingHandler());
+  
+  
+  app.use(express.json());
+  
+app.use(Sentry.Handlers.errorHandler())
 
 app.use("/categories", categoriesRoutes)
 app.use("/specifications", specificationsRoutes)
@@ -48,7 +68,6 @@ app.post("/courses", (request, response) => {
     const { name} = request.body;
     return response.json({name})
 })
-
 
 app.use((err: Error, request: Request, response: Response, next: NextFunction) => {
     if(err instanceof AppError) {
